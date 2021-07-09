@@ -1,29 +1,12 @@
-import http from "http"
-import { url } from "inspector"
+import express,{Request,Response} from "express"
+import { router } from "./routes/routes"
 
-// http.createServer(
-//     function(req,res){
-//         res.write("API IS Down")
-//         res.end()
-//     }
-// ).listen(8080);
+const app = express()
 
-// http.createServer(
-//     function (req, res) {
-//         res.writeHead(
-//             200, {
-//             "content_type": "text/html",
-//         }
-//         ),
-//             res.write("We are back with content type")
-//         res.end()
-//     }
-// ).listen(8080)
-
-http.createServer(
-    function (req, res) {
-        res.write(req.url)
-        res.end()
-        console.log(req.url)
-    }
-).listen(8080)
+app.use(express.urlencoded({extended :false}))
+app.use(express.json())
+app.use("/",router)
+ 
+app.listen(8080,()=>{
+    console.log("Server rocking 8080 and")
+})
