@@ -29,12 +29,11 @@ interface todoModelInterface extends mongoose.Model<TodoDocument>{
     
     set( x : TodoI) : TodoDocument 
     
-}
+};
 
-todoSchema.statics.set = (x:TodoI) => {
-    
-    return new Todo();
-}
+todoSchema.statics.set = (x :TodoI) => {
+    return new Todo(x);
+};
 
 const Todo = mongoose.model<TodoDocument,todoModelInterface>(
     "Todo",
@@ -44,6 +43,6 @@ const Todo = mongoose.model<TodoDocument,todoModelInterface>(
 Todo.set({
     title:"Some title",
     description : "Some description"
-})
+});
 
 export {Todo}
