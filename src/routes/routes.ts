@@ -1,32 +1,19 @@
-import express, { Request,Response }  from "express"
+import express, { Request, Response } from "express"
+import { Todo } from "../models/user_model";
 
 const router = express.Router();
 
-router.get("/",(req:Request,res:Response)=>{
-    res.json({
-        message:"API IS ROCKING",
-    })
-})
-router.post("/",(req:Request,res:Response)=>{
-  
-    const {name,email} =req.body
-    console.log(name)
-    console.log(email)
+//Post request 
 
+router.post("/add", async (req: Request, res: Response) => {
 
-    res.json({
-        user: {name,email},
-    })
-})
-router.get("/about",(req:Request,res:Response)=>{
-    res.json({
-        message:"this is about page",
-    })
-})
-router.get("/profile",(req:Request,res:Response)=>{
-    res.json({
-        message:"this is profile page",
+    const { title, description } = req.body
+    const dataItem = Todo.set({ title, description })
+     
+    await dataItem.save()
+    return res.status(200).json({
+        data:dataItem,
     })
 })
 
-export {router}
+export { router }
