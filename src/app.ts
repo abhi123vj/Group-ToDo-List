@@ -20,6 +20,6 @@ mongoose.connect(
     }
 )
 app.use("/", router)
-app.listen(8080, () => {
+app.listen(process.env.PORT || 8080, () => {
     console.log("Server rocking 8080 and")
 })
