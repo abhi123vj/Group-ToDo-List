@@ -24,19 +24,22 @@ class TodoProvider extends ChangeNotifier {
   }
 
   //Post req
-  Future addData(Map<String,String> body) async {
+  Future addData(Map<String, String> body) async {
     final url = "https://todoflutternodejswithabhi.herokuapp.com/add";
     final Uri restAPIURL = Uri.parse(url);
-    http.Response response = await httpClient.post(restAPIURL,headers: customHeaders,body: jsonEncode(body));
- 
+    http.Response response = await httpClient.post(restAPIURL,
+        headers: customHeaders, body: jsonEncode(body));
+
     return response.body;
   }
-    //Delete req
+
+  //Delete req
   Future deleteData(String id) async {
     final url = "https://todoflutternodejswithabhi.herokuapp.com/delete";
     final Uri restAPIURL = Uri.parse(url);
-    http.Response response = await httpClient.delete(restAPIURL,headers: customHeaders,body: {"id":id});
- 
+    http.Response response = await httpClient
+        .delete(restAPIURL, headers: customHeaders, body: {"id": id});
+
     return response.body;
   }
 }

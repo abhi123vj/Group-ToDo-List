@@ -51,10 +51,11 @@ router.put("/update", async (req: Request, res: Response) => {
     try {
 
         const filter = {
-            title: req.body.title,
+            id: req.body.id,
         }
         
         const updatedData = {
+            title: req.body.title,
             description: req.body.description,
         }
         const dataItem = await Todo.updateOne(filter,updatedData,{new:true}).then((data) => res.json({
