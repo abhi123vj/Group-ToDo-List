@@ -17,10 +17,8 @@ class TodoProvider extends ChangeNotifier {
     final url = "https://todoflutternodejswithabhi.herokuapp.com/";
     final Uri restAPIURL = Uri.parse(url);
     http.Response response = await httpClient.get(restAPIURL);
-    print("object1");
     final Map parseData = await json.decode(response.body.toString());
     todoData = parseData['data'];
-    print("object6 $todoData");
   }
 
   //Post req
@@ -48,8 +46,8 @@ class TodoProvider extends ChangeNotifier {
     final url = "https://todoflutternodejswithabhi.herokuapp.com/update";
     final Uri restAPIURL = Uri.parse(url);
     http.Response response = await httpClient
-        .delete(restAPIURL, headers: customHeaders, body: {"id": data});
-
+        .put(restAPIURL, headers: customHeaders, body: jsonEncode(data));
+    print(response.body);
     return response.body;
   }
 }

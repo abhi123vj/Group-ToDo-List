@@ -40,3 +40,40 @@ addDataWidget(BuildContext context) {
         );
       });
 }
+
+updateDataWidget(BuildContext context,String id) {
+  return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 300,
+          width: 300,
+          child: Column(
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(hintText: "Add title"),
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(hintText: "Add description"),
+              ),
+              ElevatedButton(
+                  onPressed: () => {
+                        if (titleController.text.isNotEmpty)
+                          {
+                            Provider.of<TodoProvider>(context, listen: false)
+                                .updateData({
+                                  "_id": id,
+                              "title": titleController.text,
+                              "description": descriptionController.text
+                            })
+                          }
+                      },
+                  child: Text("Update Data"))
+            ],
+          ),
+        );
+      });
+}
+
