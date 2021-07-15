@@ -27,7 +27,8 @@ class TodoProvider extends ChangeNotifier {
     final Uri restAPIURL = Uri.parse(url);
     http.Response response = await httpClient.post(restAPIURL,
         headers: customHeaders, body: jsonEncode(body));
-
+    notifyListeners();
+    
     return response.body;
   }
 
