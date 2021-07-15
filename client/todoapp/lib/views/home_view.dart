@@ -33,6 +33,9 @@ class _HomeViewState extends State<HomeView> {
                 itemCount: model.todoData.length,
                 itemBuilder: (context, int index) {
                   return ListTile(
+                    onTap: (){
+                      model.deleteData(model.todoData[index]['_id']);
+                    },
                     title: Text(model.todoData[index]['title']),
                     subtitle: Text(model.todoData[index]['description']),
                   );
