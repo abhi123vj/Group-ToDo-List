@@ -25,19 +25,3 @@
 > **You can try out the app [here](https://drive.google.com/file/d/1QJFAdaIOFK7yw-hi5hMXI8K-Uv37HM8x/view?usp=sharing).**
 
 ​
-
-It is recommended for those who just want to try it out please use the above mentioned link. If you want to see the code, compile and run from the codebase follow the steps below:
-
-​
-
-* **Clone** the project:
-
-  
-
-  ```bash
-
-  git clone https://github.com/sbis04/yoga-instructor.git
-
-  ```
-
-​
