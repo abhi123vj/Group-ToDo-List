@@ -51,7 +51,7 @@ router.put("/update", async (req: Request, res: Response) => {
     try {
 
         const filter = {
-            _id: req.body.id,
+            _id: req.body._id,
         }
         
         const updatedData = {
