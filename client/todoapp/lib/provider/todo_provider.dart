@@ -39,6 +39,8 @@ class TodoProvider extends ChangeNotifier {
     http.Response response = await httpClient
         .delete(restAPIURL, headers: customHeaders, body: jsonEncode({"_id": id}));
     print(response.body);
+    notifyListeners();
+
     return response.body;
   }
 

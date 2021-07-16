@@ -1,13 +1,19 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:todoapp/provider/todo_provider.dart';
 import 'dart:ui' as ui;
+import 'package:velocity_x/velocity_x.dart';
 
 final titleController = TextEditingController();
 final descriptionController = TextEditingController();
 
 addDataWidget(BuildContext context) {
+  int flag =0;
+  descriptionController.clear();
+  titleController.clear();
   return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -27,13 +33,27 @@ addDataWidget(BuildContext context) {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  Text(
+                    "NEW TODO",
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white),
+                  ).shimmer(
+                      primaryColor: Vx.cyan100,
+                      secondaryColor: Colors.white,
+                      duration: Duration(seconds: 1)),
+                  Divider(),
+                  SizedBox(
+                    height: 10,
+                  ),
                   TextFormField(
                     textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
                       labelText: 'Title',
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(
-                        Icons.title,
+                        EvaIcons.bookmarkOutline
                       ),
                     ),
                     controller: titleController,
@@ -43,11 +63,14 @@ addDataWidget(BuildContext context) {
                   ),
                   TextFormField(
                     textCapitalization: TextCapitalization.sentences,
+                    minLines: 1,
+                    maxLines: 20,
+                    keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
                       labelText: 'Description',
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(
-                        Icons.description,
+                       FontAwesomeIcons.feather
                       ),
                     ),
                     controller: descriptionController,
@@ -61,22 +84,30 @@ addDataWidget(BuildContext context) {
                       ),
                       color: Colors.greenAccent,
                       textColor: Colors.black,
-                      onPressed: () => {
-                            if (titleController.text.isNotEmpty)
-                              {
+                      onPressed: () {
+                           
+                            if (titleController.text.isNotEmpty&&flag ==0)
+                              { flag =1;
+                                
                                 Provider.of<TodoProvider>(context,
                                         listen: false)
                                     .addData({
                                   "title": titleController.text,
                                   "description": descriptionController.text
                                 }).whenComplete(() {
-                                          ///addd
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      '${titleController.text} Added!')));
-                                          Navigator.pop(context);
-                                        })
+                                  ///addd
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                          backgroundColor: Vx.gray900,
+                                          content: Text(
+                                            ' ${titleController.text} Added!',
+                                            style: TextStyle(
+                                                color: Colors.cyanAccent,
+                                                fontSize: 18),
+                                          )));
+                                          flag = 0;
+                                  Navigator.pop(context);
+                                });
                               }
                           },
                       child: Text("Submit")),
@@ -91,50 +122,10 @@ addDataWidget(BuildContext context) {
       });
 }
 
-// updateDataWidget(BuildContext context,String id,Map<String,dynamic > data) {
-//   titleController.text=data["title"];
-//     descriptionController.text=data["description"];
-
-//   return showModalBottomSheet(
-//       context: context,
-//       isScrollControlled: true,
-//       builder: (context) {
-//         return Container(
-//           height: 300,
-//           width: 300,
-//           child: Column(
-//             children: [
-//               TextField(
-//                 controller: titleController,
-//                 decoration: InputDecoration(hintText: "Add title"),
-//               ),
-//               TextField(
-//                 controller: descriptionController,
-//                 decoration: InputDecoration(hintText: "Add description"),
-//               ),
-//               ElevatedButton(
-//                   onPressed: () {
-//                         if (titleController.text.isNotEmpty){
-//                             print("thedata ${data["title"]}");
-//                             Provider.of<TodoProvider>(context, listen: false)
-//                                 .updateData({
-//                                   "_id": id,
-//                               "title": titleController.text,
-//                               "description": descriptionController.text
-//                             });
-//                           }
-//                       },
-//                   child: Text("Update Data"))
-//             ],
-//           ),
-//         );
-//       });
-// }
-
 updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
   titleController.text = data["title"];
   descriptionController.text = data["description"];
-
+  int flag =0;
   return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -154,14 +145,27 @@ updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  Text(
+                    "EDIT TODO",
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white),
+                  ).shimmer(
+                      primaryColor: Vx.cyan100,
+                      secondaryColor: Colors.white,
+                      duration: Duration(seconds: 1)),
+                  Divider(),
+                  SizedBox(
+                    height: 10,
+                  ),
                   TextFormField(
                     textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
                       labelText: 'Title',
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(
-                        Icons.title,
-                      ),
+EvaIcons.bookmarkOutline                      ),
                     ),
                     controller: titleController,
                   ),
@@ -170,11 +174,14 @@ updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
                   ),
                   TextFormField(
                     textCapitalization: TextCapitalization.sentences,
+                    minLines: 1,
+                    maxLines: 20,
+                    keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
                       labelText: 'Description',
                       border: OutlineInputBorder(),
                       suffixIcon: Icon(
-                        Icons.description,
+                       FontAwesomeIcons.feather
                       ),
                     ),
                     controller: descriptionController,
@@ -188,26 +195,29 @@ updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
                       ),
                       color: Colors.greenAccent,
                       textColor: Colors.black,
-                      onPressed: ()  {
-                            if (titleController.text.isNotEmpty)
-                              {
-                                 print("thedata onpasssng ${data["_id"]} and id $id");
-                                Provider.of<TodoProvider>(context,
-                                        listen: false)
-                                    .updateData({
-                                      "_id":id,
-                                  "title": titleController.text,
-                                  "description": descriptionController.text
-                                }).whenComplete(() {
-                                          ///addd
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      '${titleController.text} Updated!')));
-                                          Navigator.pop(context);
-                                        });
-                              }
-                          },
+                      onPressed: () {
+                        if (titleController.text.isNotEmpty&&flag ==0) {
+                          flag =1;
+                          print("thedata onpasssng ${data["_id"]} and id $id");
+                          Provider.of<TodoProvider>(context, listen: false)
+                              .updateData({
+                            "_id": id,
+                            "title": titleController.text,
+                            "description": descriptionController.text
+                          }).whenComplete(() {
+                            ///addd
+                          flag=0;
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Vx.gray900,
+                                content: Text(
+                                    '${titleController.text} Updated!',
+                                    style: TextStyle(
+                                        color: Colors.greenAccent,
+                                        fontSize: 18))));
+                            Navigator.pop(context);
+                          });
+                        }
+                      },
                       child: Text("Update")),
                   SizedBox(
                     height: 10,
@@ -219,7 +229,3 @@ updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
         );
       });
 }
-
-
-
-
