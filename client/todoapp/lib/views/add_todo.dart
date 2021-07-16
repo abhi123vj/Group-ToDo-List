@@ -188,16 +188,24 @@ updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
                       ),
                       color: Colors.greenAccent,
                       textColor: Colors.black,
-                      onPressed: () => {
+                      onPressed: ()  {
                             if (titleController.text.isNotEmpty)
                               {
+                                 print("thedata onpasssng ${data["_id"]} and id $id");
                                 Provider.of<TodoProvider>(context,
                                         listen: false)
                                     .updateData({
                                   "_id": id,
                                   "title": titleController.text,
                                   "description": descriptionController.text
-                                })
+                                }).whenComplete(() {
+                                          ///addd
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      '${titleController.text} Updated!')));
+                                          Navigator.pop(context);
+                                        });
                               }
                           },
                       child: Text("Update")),
@@ -211,3 +219,7 @@ updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
         );
       });
 }
+
+
+
+

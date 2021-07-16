@@ -28,7 +28,7 @@ class TodoProvider extends ChangeNotifier {
     http.Response response = await httpClient.post(restAPIURL,
         headers: customHeaders, body: jsonEncode(body));
     notifyListeners();
-    
+
     return response.body;
   }
 
@@ -49,6 +49,8 @@ class TodoProvider extends ChangeNotifier {
     http.Response response = await httpClient
         .put(restAPIURL, headers: customHeaders, body: jsonEncode(data));
     print(response.body);
+    notifyListeners();
     return response.body;
+    
   }
 }

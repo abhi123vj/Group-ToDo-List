@@ -55,6 +55,7 @@ router.put("/update", async (req: Request, res: Response) => {
         }
         
         const updatedData = {
+            _id:req.body.id,
             title: req.body.title,
             description: req.body.description,
         }

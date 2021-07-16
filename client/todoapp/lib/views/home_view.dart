@@ -84,11 +84,12 @@ class _HomeViewState extends State<HomeView> {
                       }
                       return false;
                     },
-                    child: ListTile(
-                      onLongPress: () {
-                        model.deleteData(model.todoData[index]['_id']);
-                      },
+                     child: ListTile(
+                    //   onLongPress: () {
+                    //     model.deleteData(model.todoData[index]['_id']);
+                    //   },
                       onTap: () {
+                        print("thedata ${model.todoData[index]['_id']}");
                         updateDataWidget(context, model.todoData[index]['_id'],
                             model.todoData[index]);
                       },
