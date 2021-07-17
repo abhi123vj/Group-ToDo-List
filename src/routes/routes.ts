@@ -26,7 +26,8 @@ router.get("/", async (req: Request, res: Response) => {
         })
     }
     catch (e) {
-        console.log("e")
+        console.log("e at get")
+        console.log(e)
     }
 })
 // delet
@@ -68,7 +69,7 @@ router.put("/update", async (req: Request, res: Response) => {
         })
     }
     catch (e) {
-        console.log("e")
+        console.log("e is ")
     }
 })
 export { router }
