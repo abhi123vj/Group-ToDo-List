@@ -11,7 +11,7 @@ final titleController = TextEditingController();
 final descriptionController = TextEditingController();
 
 addDataWidget(BuildContext context) {
-  int flag =0;
+  int flag = 0;
   descriptionController.clear();
   titleController.clear();
   return showModalBottomSheet(
@@ -52,9 +52,7 @@ addDataWidget(BuildContext context) {
                     decoration: InputDecoration(
                       labelText: 'Title',
                       border: OutlineInputBorder(),
-                      suffixIcon: Icon(
-                        EvaIcons.bookmarkOutline
-                      ),
+                      suffixIcon: Icon(EvaIcons.bookmarkOutline),
                     ),
                     controller: titleController,
                   ),
@@ -69,9 +67,7 @@ addDataWidget(BuildContext context) {
                     decoration: InputDecoration(
                       labelText: 'Description',
                       border: OutlineInputBorder(),
-                      suffixIcon: Icon(
-                       FontAwesomeIcons.feather
-                      ),
+                      suffixIcon: Icon(FontAwesomeIcons.feather),
                     ),
                     controller: descriptionController,
                   ),
@@ -85,31 +81,27 @@ addDataWidget(BuildContext context) {
                       color: Colors.greenAccent,
                       textColor: Colors.black,
                       onPressed: () {
-                           
-                            if (titleController.text.isNotEmpty&&flag ==0)
-                              { flag =1;
-                                
-                                Provider.of<TodoProvider>(context,
-                                        listen: false)
-                                    .addData({
-                                  "title": titleController.text,
-                                  "description": descriptionController.text
-                                }).whenComplete(() {
-                                  ///addd
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                          backgroundColor: Vx.gray900,
-                                          content: Text(
-                                            ' ${titleController.text} Added!',
-                                            style: TextStyle(
-                                                color: Colors.cyanAccent,
-                                                fontSize: 18),
-                                          )));
-                                          flag = 0;
-                                  Navigator.pop(context);
-                                });
-                              }
-                          },
+                        if (titleController.text.isNotEmpty && flag == 0) {
+                          flag = 1;
+
+                          Provider.of<TodoProvider>(context, listen: false)
+                              .addData({
+                            "title": titleController.text,
+                            "description": descriptionController.text
+                          }).whenComplete(() {
+                            ///addd
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Vx.gray900,
+                                content: Text(
+                                  ' ${titleController.text} Added!',
+                                  style: TextStyle(
+                                      color: Colors.cyanAccent, fontSize: 18),
+                                )));
+                            flag = 0;
+                            Navigator.pop(context);
+                          });
+                        }
+                      },
                       child: Text("Submit")),
                   SizedBox(
                     height: 10,
@@ -125,7 +117,7 @@ addDataWidget(BuildContext context) {
 updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
   titleController.text = data["title"];
   descriptionController.text = data["description"];
-  int flag =0;
+  int flag = 0;
   return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -164,8 +156,7 @@ updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
                     decoration: InputDecoration(
                       labelText: 'Title',
                       border: OutlineInputBorder(),
-                      suffixIcon: Icon(
-EvaIcons.bookmarkOutline                      ),
+                      suffixIcon: Icon(EvaIcons.bookmarkOutline),
                     ),
                     controller: titleController,
                   ),
@@ -180,9 +171,7 @@ EvaIcons.bookmarkOutline                      ),
                     decoration: InputDecoration(
                       labelText: 'Description',
                       border: OutlineInputBorder(),
-                      suffixIcon: Icon(
-                       FontAwesomeIcons.feather
-                      ),
+                      suffixIcon: Icon(FontAwesomeIcons.feather),
                     ),
                     controller: descriptionController,
                   ),
@@ -196,8 +185,8 @@ EvaIcons.bookmarkOutline                      ),
                       color: Colors.greenAccent,
                       textColor: Colors.black,
                       onPressed: () {
-                        if (titleController.text.isNotEmpty&&flag ==0) {
-                          flag =1;
+                        if (titleController.text.isNotEmpty && flag == 0) {
+                          flag = 1;
                           print("thedata onpasssng ${data["_id"]} and id $id");
                           Provider.of<TodoProvider>(context, listen: false)
                               .updateData({
@@ -206,7 +195,7 @@ EvaIcons.bookmarkOutline                      ),
                             "description": descriptionController.text
                           }).whenComplete(() {
                             ///addd
-                          flag=0;
+                            flag = 0;
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 backgroundColor: Vx.gray900,
                                 content: Text(

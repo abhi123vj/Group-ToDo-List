@@ -31,11 +31,14 @@ class _HomeViewState extends State<HomeView> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => addDataWidget(context),
         icon: Icon(FontAwesomeIcons.plus),
-        label: Text('New',style: TextStyle(
-                fontFamily: "RobotoMono",
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),),
+        label: Text(
+          'New',
+          style: TextStyle(
+            fontFamily: "RobotoMono",
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         foregroundColor: Colors.black,
       ),
       appBar: AppBar(
@@ -117,7 +120,12 @@ class _HomeViewState extends State<HomeView> {
                             (DismissDirection dismissDirection) async {
                           switch (dismissDirection) {
                             case DismissDirection.endToStart:
-
+                              return await _showConfirmationDialog(
+                                      context,
+                                      'Delete',
+                                      model.todoData[index]['title'],
+                                      model.todoData[index]['description']) ==
+                                  true;
                             case DismissDirection.startToEnd:
                               return await _showConfirmationDialog(
                                       context,
@@ -139,7 +147,7 @@ class _HomeViewState extends State<HomeView> {
                           //   onLongPress: () {
                           //     model.deleteData(model.todoData[index]['_id']);
                           //   },
-                          onLongPress: () {
+                          onTap: () {
                             print("thedata ${model.todoData[index]['_id']}");
                             updateDataWidget(
                                 context,
@@ -200,11 +208,14 @@ Future<bool?> _showConfirmationDialog(
             child: ListBody(
               children: <Widget>[
                 Center(
-                  child: Text(title,style: TextStyle(
-                                  fontFamily: "RobotoMono",
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20,
-                                  fontStyle: FontStyle.italic),),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                        fontFamily: "RobotoMono",
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        fontStyle: FontStyle.italic),
+                  ),
                 ).shimmer(
                     primaryColor: Colors.white,
                     secondaryColor: Vx.red300,

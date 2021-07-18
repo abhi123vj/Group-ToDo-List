@@ -23,7 +23,7 @@ class TodoProvider extends ChangeNotifier {
 
   //Post req
   Future addData(Map<String, String> body) async {
-    final url = "https://todoflutternodejswithabhi.herokuapp.com/add";
+    final url = "https://todoflutternodejswithabhi.herokuapp.com/add";  
     final Uri restAPIURL = Uri.parse(url);
     http.Response response = await httpClient.post(restAPIURL,
         headers: customHeaders, body: jsonEncode(body));
