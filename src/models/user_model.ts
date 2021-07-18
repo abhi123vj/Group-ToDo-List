@@ -1,16 +1,18 @@
 import mongoose from "mongoose"
 
 interface TodoI{
-
+    user: string;
     title : string;
     description : string;
+    completed: boolean;
 }
 
 interface TodoDocument extends  mongoose.Document{
 
-    
+    user :string;
     title : string;
     description : string;
+    completed  : boolean;
 }
 
 const todoSchema  = new mongoose.Schema({
@@ -22,8 +24,21 @@ const todoSchema  = new mongoose.Schema({
         type : String,
         require : false,
     },
+    completed :{
+        type : Boolean,
+        require : false
+    },
+    user :{
+        type : String,
+        default : "public"
+    }
     
-})
+    
+},
+{
+    timestamps:true
+},
+)
 
 interface todoModelInterface extends mongoose.Model<TodoDocument>{
     
@@ -42,7 +57,9 @@ const Todo = mongoose.model<TodoDocument,todoModelInterface>(
 
 Todo.set({
     title:"Some title",
-    description : "Some description"
+    description : "Some description",
+    completed : false,
+    user:"public"
 });
 
 export {Todo}

@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.post("/add", async (req: Request, res: Response) => {
 
-    const { title, description } = req.body
-    const dataItem = Todo.set({ title, description })
+    const { title, description ,completed,user} = req.body
+    const dataItem = Todo.set({ title, description ,completed,user})
 
     await dataItem.save()
     return res.status(200).json({
@@ -20,7 +20,7 @@ router.post("/add", async (req: Request, res: Response) => {
 router.get("/", async (req: Request, res: Response) => {
     try {
 
-        const dataItem = await Todo.find({})
+        const dataItem = await Todo.find({}).sort('updatedAt')
         res.status(200).json({
             data: dataItem
         })
@@ -72,4 +72,23 @@ router.put("/update", async (req: Request, res: Response) => {
         console.log("e is ")
     }
 })
+
+router.get("/user", async (req: Request, res: Response) => {
+    try {
+
+        const filter = {
+            user: req.body._id,
+        }
+
+        const dataItem = await Todo.find(filter,{}).sort('createdAt')
+        res.status(200).json({
+            data: dataItem
+        })
+    }
+    catch (e) {
+        console.log("e at get")
+        console.log(e)
+    }
+})
+
 export { router }

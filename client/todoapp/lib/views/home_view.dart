@@ -1,8 +1,6 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:readmore/readmore.dart';
 import 'package:velocity_x/velocity_x.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
