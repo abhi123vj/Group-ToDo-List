@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp/provider/todo_provider.dart';
 import 'dart:ui' as ui;
 import 'package:velocity_x/velocity_x.dart';
@@ -10,8 +11,17 @@ import 'package:velocity_x/velocity_x.dart';
 final titleController = TextEditingController();
 final descriptionController = TextEditingController();
 
+Future<void> addUser(String counter) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('user', counter);
+}
+
+String? userName;
+
 addDataWidget(BuildContext context) {
+  print("todo username is $userName");
   int flag = 0;
+
   descriptionController.clear();
   titleController.clear();
   return showModalBottomSheet(
@@ -86,8 +96,10 @@ addDataWidget(BuildContext context) {
 
                           Provider.of<TodoProvider>(context, listen: false)
                               .addData({
+                            "user": userName,
                             "title": titleController.text,
-                            "description": descriptionController.text
+                            "description": descriptionController.text,
+                            "completed": false
                           }).whenComplete(() {
                             ///addd
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -100,6 +112,14 @@ addDataWidget(BuildContext context) {
                             flag = 0;
                             Navigator.pop(context);
                           });
+                        } else if (flag == 0 &&
+                            descriptionController.text.isNotEmpty) {
+                          addUser(descriptionController.text);
+                          Navigator.pop(context);
+                        }else{
+                          addUser("public");
+                                                    Navigator.pop(context);
+
                         }
                       },
                       child: Text("Submit")),
@@ -114,7 +134,8 @@ addDataWidget(BuildContext context) {
       });
 }
 
-updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
+updateDataWidget(
+    BuildContext context, String id, Map<String, dynamic> data) async {
   titleController.text = data["title"];
   descriptionController.text = data["description"];
   int flag = 0;
@@ -185,14 +206,15 @@ updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
                       color: Colors.greenAccent,
                       textColor: Colors.black,
                       onPressed: () {
-                        if (titleController.text.isNotEmpty && flag == 0) {
+                        if (titleController.text.isNotEmpty && flag == 0&&data["user"]==userName) {
                           flag = 1;
                           print("thedata onpasssng ${data["_id"]} and id $id");
                           Provider.of<TodoProvider>(context, listen: false)
                               .updateData({
                             "_id": id,
                             "title": titleController.text,
-                            "description": descriptionController.text
+                            "description": descriptionController.text,
+                            "completed": false
                           }).whenComplete(() {
                             ///addd
                             flag = 0;
@@ -205,6 +227,9 @@ updateDataWidget(BuildContext context, String id, Map<String, dynamic> data) {
                                         fontSize: 18))));
                             Navigator.pop(context);
                           });
+                        }else{
+                          Navigator.pop(context);
+                          print("Autherrorr");//////sas
                         }
                       },
                       child: Text("Update")),

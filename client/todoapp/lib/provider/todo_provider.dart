@@ -22,8 +22,8 @@ class TodoProvider extends ChangeNotifier {
   }
 
   //Post req
-  Future addData(Map<String, String> body) async {
-    final url = "https://todoflutternodejswithabhi.herokuapp.com/add";  
+  Future addData(Map<String, dynamic> body) async {
+    final url = "https://todoflutternodejswithabhi.herokuapp.com/add";
     final Uri restAPIURL = Uri.parse(url);
     http.Response response = await httpClient.post(restAPIURL,
         headers: customHeaders, body: jsonEncode(body));
@@ -36,24 +36,35 @@ class TodoProvider extends ChangeNotifier {
   Future deleteData(String id) async {
     final url = "https://todoflutternodejswithabhi.herokuapp.com/delete";
     final Uri restAPIURL = Uri.parse(url);
-    http.Response response = await httpClient
-        .delete(restAPIURL, headers: customHeaders, body: jsonEncode({"_id": id}));
+    http.Response response = await httpClient.delete(restAPIURL,
+        headers: customHeaders, body: jsonEncode({"_id": id}));
     print(response.body);
     notifyListeners();
 
     return response.body;
   }
 
-    //update req
-  Future updateData(Map<String,dynamic> data) async {
+  //update req
+  Future updateData(Map<String, dynamic> data) async {
     final url = "https://todoflutternodejswithabhi.herokuapp.com/update";
     final Uri restAPIURL = Uri.parse(url);
-    http.Response response = await httpClient
-        .put(restAPIURL, headers: customHeaders, body: jsonEncode(data));
+    http.Response response = await httpClient.put(restAPIURL,
+        headers: customHeaders, body: jsonEncode(data));
     print(response.body);
     notifyListeners();
-
     return response.body;
-    
+  }
+
+  //filter get req
+  Future filterfetchData(String userName) async {
+    final url = "https://todoflutternodejswithabhi.herokuapp.com";
+    var body = {
+      'user': userName,
+      'param2': 'two',
+    };
+    var uri = Uri.https(url, '/user', body);
+    http.Response response = await httpClient.get(uri);
+    final Map parseData = await json.decode(response.body.toString());
+    todoData = parseData['data'];
   }
 }

@@ -78,7 +78,7 @@ router.get("/user", async (req: Request, res: Response) => {
     try {
 
         const filter = {
-            user: req.body._id,
+            user: req.body.user,
         }
 
         const dataItem = await Todo.find(filter,{}).sort({createdAt:1})

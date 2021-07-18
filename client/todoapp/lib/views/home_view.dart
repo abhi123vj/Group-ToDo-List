@@ -5,7 +5,7 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:todoapp/provider/todo_provider.dart';
 import 'dart:ui' as ui;
@@ -20,9 +20,11 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  String? user;
   @override
   void initState() {
     Provider.of<TodoProvider>(context, listen: false).fetchData();
+    userFider();
     super.initState();
   }
 
@@ -51,6 +53,14 @@ class _HomeViewState extends State<HomeView> {
           displayFullTextOnTap: true,
           stopPauseOnTap: true,
         ),
+        actions: [
+          IconButton(
+            icon: Icon(EvaIcons.sync),
+            onPressed: () {
+              setState(() {});
+            },
+          ),
+        ],
         centerTitle: true,
       ),
       body: Container(
@@ -127,15 +137,14 @@ class _HomeViewState extends State<HomeView> {
                           switch (dismissDirection) {
                             case DismissDirection.endToStart:
                               return await _showConfirmationDialog(
-                                      context,
-                                      'Delete',
-                                      model,index) ==
+                                      context, 'Delete', model, index) ==
                                   true;
                             case DismissDirection.startToEnd:
                               return await _showConfirmationDialog(
                                       context,
                                       cmplt ? 'Reactivate' : 'Completed',
-                                      model,index) ==
+                                      model,
+                                      index) ==
                                   true;
                             case DismissDirection.horizontal:
                             case DismissDirection.vertical:
@@ -193,16 +202,30 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       );
                     }),
-            future: model.fetchData(),
+            future: model.filterfetchData(userName??"public"),
           ),
         ),
       ),
     );
   }
+
+  userFider() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    user = await prefs.getString('user')??"public";
+    userName=user;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Vx.gray900,
+        content: Text('$user Welcome!',
+            style: TextStyle(color: Colors.greenAccent, fontSize: 18))));
+    setState(() {
+      print("the user is $user");
+    });
+  }
 }
 
 Future<bool?> _showConfirmationDialog(
-    BuildContext context, String action, var model,int index) {
+    BuildContext context, String action, var model, int index) {
+  int flag = 0;
   return showDialog<bool>(
     context: context,
     barrierDismissible: true,
@@ -216,7 +239,7 @@ Future<bool?> _showConfirmationDialog(
               children: <Widget>[
                 Center(
                   child: Text(
-                     model.todoData[index]['title'],
+                    model.todoData[index]['title'],
                     style: TextStyle(
                         fontFamily: "RobotoMono",
                         fontWeight: FontWeight.w700,
@@ -237,30 +260,30 @@ Future<bool?> _showConfirmationDialog(
                 style: TextStyle(color: Vx.red100),
               ),
               onPressed: () {
-               if( action == "Delete")
-                     Navigator.pop(context, true);
-                else{
-                              Provider.of<TodoProvider>(context, listen: false)
-                              .updateData({
-                            "_id": model.todoData[index]['_id'],
-                            "title": model.todoData[index]['title'],
-                            "description": model.todoData[index]['description'],
-                            "completed":model.todoData[index]['completed']=="true"?true:false
-                          }).whenComplete(() {
-                            ///addd
-                            
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Vx.gray900,
-                                content: Text(
-                                    '${titleController.text} Updated!',
-                                    style: TextStyle(
-                                        color: Colors.greenAccent,
-                                        fontSize: 18))));
-                            Navigator.pop(context);
-                          });
-                          
-                          }
-                   
+                if (flag == 0) {
+                  flag = 1;
+                  if (action == "Delete")
+                    Navigator.pop(context, true);
+                  else {
+                    Provider.of<TodoProvider>(context, listen: false)
+                        .updateData({
+                      "_id": model.todoData[index]['_id'],
+                      "title": model.todoData[index]['title'],
+                      "description": model.todoData[index]['description'],
+                      "completed":
+                          model.todoData[index]['completed'] ? false : true
+                    }).whenComplete(() {
+                      ///addd
+
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Vx.gray900,
+                          content: Text('${titleController.text} Updated!',
+                              style: TextStyle(
+                                  color: Colors.greenAccent, fontSize: 18))));
+                      Navigator.pop(context);
+                    });
+                  }
+                }
               },
             ),
             ElevatedButton(
