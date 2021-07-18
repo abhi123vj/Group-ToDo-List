@@ -45,13 +45,14 @@ class TodoProvider extends ChangeNotifier {
   }
 
     //update req
-  Future updateData(Map<String,String> data) async {
+  Future updateData(Map<String,dynamic> data) async {
     final url = "https://todoflutternodejswithabhi.herokuapp.com/update";
     final Uri restAPIURL = Uri.parse(url);
     http.Response response = await httpClient
         .put(restAPIURL, headers: customHeaders, body: jsonEncode(data));
     print(response.body);
     notifyListeners();
+
     return response.body;
     
   }

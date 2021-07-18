@@ -58,6 +58,7 @@ router.put("/update", async (req: Request, res: Response) => {
         const updatedData = {
             title: req.body.title,
             description: req.body.description,
+            completed:req.body.completed
         }
         const dataItem = await Todo.updateOne(filter,updatedData,{new:true}).then((data) => res.json({
             data: data
@@ -80,7 +81,7 @@ router.get("/user", async (req: Request, res: Response) => {
             user: req.body._id,
         }
 
-        const dataItem = await Todo.find(filter,{}).sort('createdAt')
+        const dataItem = await Todo.find(filter,{}).sort({createdAt:1})
         res.status(200).json({
             data: dataItem
         })

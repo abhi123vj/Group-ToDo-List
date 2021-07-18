@@ -1,9 +1,12 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:readmore/readmore.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+
 import 'package:todoapp/provider/todo_provider.dart';
 import 'dart:ui' as ui;
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -26,17 +29,9 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => addDataWidget(context),
-        icon: Icon(FontAwesomeIcons.plus),
-        label: Text(
-          'New',
-          style: TextStyle(
-            fontFamily: "RobotoMono",
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        child: Icon(FontAwesomeIcons.book),
         foregroundColor: Colors.black,
       ),
       appBar: AppBar(
@@ -87,12 +82,23 @@ class _HomeViewState extends State<HomeView> {
                     physics: BouncingScrollPhysics(),
                     itemCount: model.todoData.length,
                     itemBuilder: (context, int index) {
+                      bool cmplt = model.todoData[index]['completed'];
+                      //  String date = model.todoData[index]['createdAt'];
+                      //  var date2 = DateTime.parse(date);
+                      // var dayneeded = daysBetween(date2, DateTime.now());
+                      //print("ff $dayneeded");
                       return Dismissible(
                         background: Container(
                           padding: EdgeInsets.symmetric(horizontal: 12.0),
-                          color: Colors.red,
+                          color: cmplt ? Colors.grey : Colors.green,
                           alignment: Alignment.centerLeft,
-                          child: Icon(FontAwesomeIcons.trashAlt),
+                          child: Row(
+                            children: [
+                              cmplt
+                                  ? Icon(EvaIcons.undoOutline)
+                                  : Icon(EvaIcons.checkmark),
+                            ],
+                          ),
                         ),
                         secondaryBackground: Container(
                           padding: EdgeInsets.symmetric(horizontal: 12.0),
@@ -102,17 +108,19 @@ class _HomeViewState extends State<HomeView> {
                         ),
                         key: ValueKey(model.todoData[index]['_id']),
                         onDismissed: (DismissDirection direction) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Vx.gray900,
-                              content: Text(
-                                ' ${model.todoData[index]['title']}  Removed!',
-                                style: TextStyle(
-                                    color: Colors.redAccent, fontSize: 18),
-                              )));
-                          model.deleteData(model.todoData[index]['_id']);
-                          setState(() {
-                            model.todoData.removeAt(index);
-                          });
+                          if (direction == DismissDirection.endToStart) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Vx.gray900,
+                                content: Text(
+                                  ' ${model.todoData[index]['title']}  Removed!',
+                                  style: TextStyle(
+                                      color: Colors.redAccent, fontSize: 18),
+                                )));
+                            model.deleteData(model.todoData[index]['_id']);
+                            setState(() {
+                              model.todoData.removeAt(index);
+                            });
+                          }
                         },
                         confirmDismiss:
                             (DismissDirection dismissDirection) async {
@@ -121,15 +129,13 @@ class _HomeViewState extends State<HomeView> {
                               return await _showConfirmationDialog(
                                       context,
                                       'Delete',
-                                      model.todoData[index]['title'],
-                                      model.todoData[index]['description']) ==
+                                      model,index) ==
                                   true;
                             case DismissDirection.startToEnd:
                               return await _showConfirmationDialog(
                                       context,
-                                      'Delete',
-                                      model.todoData[index]['title'],
-                                      model.todoData[index]['description']) ==
+                                      cmplt ? 'Reactivate' : 'Completed',
+                                      model,index) ==
                                   true;
                             case DismissDirection.horizontal:
                             case DismissDirection.vertical:
@@ -155,19 +161,22 @@ class _HomeViewState extends State<HomeView> {
                           title: Text(
                             model.todoData[index]['title'],
                             style: TextStyle(
-                                fontFamily: "RobotoMono",
-                                fontWeight: FontWeight.w900,
-                                fontSize: 26,
-                                fontStyle: FontStyle.normal),
+                              fontFamily: "RobotoMono",
+                              fontWeight: FontWeight.w900,
+                              fontSize: 26,
+                              fontStyle: FontStyle.normal,
+                            ),
                           ).shimmer(
                               primaryColor: Colors.white,
-                              secondaryColor: Vx.cyan100,
-                              duration: Duration(seconds: 2)),
+                              secondaryColor: cmplt ? Vx.cyan100 : Vx.cyan400,
+                              duration: Duration(seconds: cmplt ? 2 : 3)),
                           //subtitle: Text(model.todoData[index]['description'],style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20)),
                           subtitle: Container(
                             child: ReadMoreText(
                               model.todoData[index]['description'],
                               style: TextStyle(
+                                  decoration:
+                                      cmplt ? TextDecoration.lineThrough : null,
                                   fontFamily: "RobotoMono",
                                   fontWeight: FontWeight.w300,
                                   fontSize: 15,
@@ -193,7 +202,7 @@ class _HomeViewState extends State<HomeView> {
 }
 
 Future<bool?> _showConfirmationDialog(
-    BuildContext context, String action, String title, String descrptn) {
+    BuildContext context, String action, var model,int index) {
   return showDialog<bool>(
     context: context,
     barrierDismissible: true,
@@ -207,7 +216,7 @@ Future<bool?> _showConfirmationDialog(
               children: <Widget>[
                 Center(
                   child: Text(
-                    title,
+                     model.todoData[index]['title'],
                     style: TextStyle(
                         fontFamily: "RobotoMono",
                         fontWeight: FontWeight.w700,
@@ -228,7 +237,30 @@ Future<bool?> _showConfirmationDialog(
                 style: TextStyle(color: Vx.red100),
               ),
               onPressed: () {
-                Navigator.pop(context, true); // showDialog() returns true
+               if( action == "Delete")
+                     Navigator.pop(context, true);
+                else{
+                              Provider.of<TodoProvider>(context, listen: false)
+                              .updateData({
+                            "_id": model.todoData[index]['_id'],
+                            "title": model.todoData[index]['title'],
+                            "description": model.todoData[index]['description'],
+                            "completed":model.todoData[index]['completed']=="true"?true:false
+                          }).whenComplete(() {
+                            ///addd
+                            
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Vx.gray900,
+                                content: Text(
+                                    '${titleController.text} Updated!',
+                                    style: TextStyle(
+                                        color: Colors.greenAccent,
+                                        fontSize: 18))));
+                            Navigator.pop(context);
+                          });
+                          
+                          }
+                   
               },
             ),
             ElevatedButton(
@@ -248,4 +280,10 @@ Future<bool?> _showConfirmationDialog(
       );
     },
   );
+}
+
+int daysBetween(DateTime from, DateTime to) {
+  from = DateTime(from.year, from.month, from.day);
+  to = DateTime(to.year, to.month, to.day);
+  return (to.difference(from).inHours / 24).round();
 }
