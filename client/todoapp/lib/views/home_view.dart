@@ -61,19 +61,13 @@ class _HomeViewState extends State<HomeView> {
       body: Container(
         child: Consumer<TodoProvider>(
           builder: (context, model, _) => FutureBuilder(
-            builder: (context, snapshot) => AsyncSnapshot.nothing() == snapshot
+            builder: (context, snapshot) => snapshot.connectionState != ConnectionState.done
                 ? Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.topCenter,
                     child: Column(
                       children: [
-                        MaterialButton(
-                          onPressed: () {
-                            print("model ");
-                            print("model $snapshot");
-                          },
-                        ),
                         LinearProgressIndicator(
                           valueColor:
                               AlwaysStoppedAnimation<Color>(Colors.greenAccent),
