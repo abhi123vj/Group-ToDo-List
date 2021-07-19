@@ -47,7 +47,7 @@ addDataWidget(BuildContext context) {
                   Text(
                     "NEW TODO",
                     style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 34,
                         fontWeight: FontWeight.w900,
                         color: Colors.white),
                   ).shimmer(
@@ -108,7 +108,7 @@ addDataWidget(BuildContext context) {
                                 content: Text(
                                   ' ${titleController.text} Added!',
                                   style: TextStyle(
-                                      color: Colors.cyanAccent, fontSize: 18),
+                                      color: Colors.cyanAccent, fontSize: 20),
                                 )));
                             flag = 0;
                             Navigator.pop(context);
@@ -167,7 +167,7 @@ updateDataWidget(
                   Text(
                     "EDIT TODO",
                     style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 34,
                         fontWeight: FontWeight.w900,
                         color: Colors.white),
                   ).shimmer(
@@ -232,7 +232,7 @@ updateDataWidget(
                                     '${titleController.text} Updated!',
                                     style: TextStyle(
                                         color: Colors.greenAccent,
-                                        fontSize: 18))));
+                                        fontSize: 20))));
                             Navigator.pop(context);
                           });
                         } else {
@@ -241,7 +241,7 @@ updateDataWidget(
                               content: Text(
                                 'Invalid Inputs',
                                 style: TextStyle(
-                                    color: Colors.cyanAccent, fontSize: 18),
+                                    color: Colors.cyanAccent, fontSize: 20),
                               )));
                         }
                       },

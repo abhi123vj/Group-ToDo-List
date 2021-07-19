@@ -1,5 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:readmore/readmore.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +46,7 @@ class _HomeViewState extends State<HomeView> {
               'Todo List',
               textStyle: const TextStyle(
                 fontFamily: "RobotoMono",
-                fontSize: 28,
+                fontSize: 34,
                 fontWeight: FontWeight.bold,
               ),
               speed: const Duration(milliseconds: 1500),
@@ -122,7 +124,7 @@ class _HomeViewState extends State<HomeView> {
                                 content: Text(
                                   ' ${model.todoData[index]['title']}  Removed!',
                                   style: TextStyle(
-                                      color: Colors.redAccent, fontSize: 18),
+                                      color: Colors.redAccent, fontSize: 20),
                                 )));
                             model.deleteData(model.todoData[index]['_id']);
                             model.todoData.removeAt(index);
@@ -163,34 +165,46 @@ class _HomeViewState extends State<HomeView> {
                                 model.todoData[index]['_id'],
                                 model.todoData[index]);
                           },
-                          title: Text(
+                          title: AutoSizeText(
                             model.todoData[index]['title'],
-                            style: TextStyle(
-                              fontFamily: "RobotoMono",
-                              fontWeight: FontWeight.w900,
-                              fontSize: 26,
+                            maxLines: 2,
+                            minFontSize: 18,
+                            // style: TextStyle(
+                            //   fontFamily: "RobotoMono",
+                            //   fontWeight: FontWeight.w900,
+
+                            //   fontSize: 24,
+                            //   fontStyle: FontStyle.normal,
+                            // ),
+                            style: GoogleFonts.raleway(
+                              textStyle: Theme.of(context).textTheme.headline4,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
                               fontStyle: FontStyle.normal,
                             ),
                           ).shimmer(
-                              primaryColor: Colors.white,
+                              primaryColor: Vx.blue100,
                               secondaryColor: cmplt ? Vx.cyan100 : Vx.cyan400,
                               duration: Duration(seconds: cmplt ? 2 : 3)),
                           //subtitle: Text(model.todoData[index]['description'],style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20)),
                           subtitle: Container(
                             child: ReadMoreText(
                               model.todoData[index]['description'],
+                              
                               style: TextStyle(
                                   decoration:
                                       cmplt ? TextDecoration.lineThrough : null,
                                   fontFamily: "RobotoMono",
                                   fontWeight: FontWeight.w300,
-                                  fontSize: 15,
+                                  
+                                  fontSize: 16,
                                   fontStyle: FontStyle.italic),
                               trimLines: 3,
                               textScaleFactor: 1.25,
                               trimMode: TrimMode.Line,
                               moreStyle: TextStyle(
                                 fontSize: 14,
+                                
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -212,7 +226,7 @@ class _HomeViewState extends State<HomeView> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Vx.gray900,
         content: Text('$user Welcome!',
-            style: TextStyle(color: Colors.greenAccent, fontSize: 18))));
+            style: TextStyle(color: Colors.greenAccent, fontSize: 20))));
     Provider.of<TodoProvider>(context, listen: false)
         .filterfetchData(userName ?? "public");
     setState(() {
@@ -241,7 +255,7 @@ Future<bool?> _showConfirmationDialog(
                     style: TextStyle(
                         fontFamily: "RobotoMono",
                         fontWeight: FontWeight.w700,
-                        fontSize: 20,
+                        fontSize: 24,
                         fontStyle: FontStyle.italic),
                   ),
                 ).shimmer(
@@ -277,7 +291,7 @@ Future<bool?> _showConfirmationDialog(
                           backgroundColor: Vx.gray900,
                           content: Text('${titleController.text} Updated!',
                               style: TextStyle(
-                                  color: Colors.greenAccent, fontSize: 18))));
+                                  color: Colors.greenAccent, fontSize: 20))));
                       Navigator.pop(context);
                     });
                   }

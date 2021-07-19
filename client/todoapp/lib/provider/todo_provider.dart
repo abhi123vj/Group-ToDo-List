@@ -3,11 +3,10 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:velocity_x/velocity_x.dart';
 
 class TodoProvider extends ChangeNotifier {
   final httpClient = http.Client();
-  
+
   List<dynamic> todoData = [];
   Map<String, String> customHeaders = {
     "Accept": "application/json",
@@ -58,17 +57,19 @@ class TodoProvider extends ChangeNotifier {
 
   //filter get req
   Future filterfetchData(String userName) async {
-try{  final url = "https://todoflutternodejswithabhi.herokuapp.com/";
-    final Uri restAPIURL = Uri.parse(url);
-    http.Response response = await httpClient.get(restAPIURL);
-    final Map parseData = await json.decode(response.body.toString());
-    print(parseData['data']);
-    parseData['data'] = parseData['data'].where((element) => element['user']==userName).toList();
-  
-    todoData = parseData['data'];}
-    catch(e){
+    try {
+      final url = "https://todoflutternodejswithabhi.herokuapp.com/";
+      final Uri restAPIURL = Uri.parse(url);
+      http.Response response = await httpClient.get(restAPIURL);
+      final Map parseData = await json.decode(response.body.toString());
+      print(parseData['data']);
+      parseData['data'] = parseData['data']
+          .where((element) => element['user'] == userName)
+          .toList();
+
+      todoData = parseData['data'];
+    } catch (e) {
       // VxToast.show(, msg: "Hello from vx");
     }
-    notifyListeners();
   }
 }
