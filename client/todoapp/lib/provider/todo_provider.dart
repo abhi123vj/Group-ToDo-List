@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:velocity_x/velocity_x.dart';
 
 class TodoProvider extends ChangeNotifier {
   final httpClient = http.Client();
-
+  
   List<dynamic> todoData = [];
   Map<String, String> customHeaders = {
     "Accept": "application/json",
@@ -57,14 +58,17 @@ class TodoProvider extends ChangeNotifier {
 
   //filter get req
   Future filterfetchData(String userName) async {
-    final url = "https://todoflutternodejswithabhi.herokuapp.com";
-    var body = {
-      'user': userName,
-      'param2': 'two',
-    };
-    var uri = Uri.https(url, '/user', body);
-    http.Response response = await httpClient.get(uri);
+try{  final url = "https://todoflutternodejswithabhi.herokuapp.com/";
+    final Uri restAPIURL = Uri.parse(url);
+    http.Response response = await httpClient.get(restAPIURL);
     final Map parseData = await json.decode(response.body.toString());
-    todoData = parseData['data'];
+    print(parseData['data']);
+    parseData['data'] = parseData['data'].where((element) => element['user']==userName).toList();
+  
+    todoData = parseData['data'];}
+    catch(e){
+      // VxToast.show(, msg: "Hello from vx");
+    }
+    notifyListeners();
   }
 }

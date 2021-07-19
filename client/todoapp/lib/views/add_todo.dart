@@ -14,6 +14,7 @@ final descriptionController = TextEditingController();
 Future<void> addUser(String counter) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString('user', counter);
+  userFider();
 }
 
 String? userName;
@@ -116,10 +117,15 @@ addDataWidget(BuildContext context) {
                             descriptionController.text.isNotEmpty) {
                           addUser(descriptionController.text);
                           Navigator.pop(context);
-                        }else{
+                          Provider.of<TodoProvider>(context, listen: false)
+                              .filterfetchData(userName ?? "public");
+                        } else {
                           addUser("public");
-                                                    Navigator.pop(context);
+                        
+                          Provider.of<TodoProvider>(context, listen: false)
+                              .filterfetchData(userName ?? "public");
 
+                          Navigator.pop(context);
                         }
                       },
                       child: Text("Submit")),
@@ -206,7 +212,9 @@ updateDataWidget(
                       color: Colors.greenAccent,
                       textColor: Colors.black,
                       onPressed: () {
-                        if (titleController.text.isNotEmpty && flag == 0&&data["user"]==userName) {
+                        if (titleController.text.isNotEmpty &&
+                            flag == 0 &&
+                            data["user"] == userName) {
                           flag = 1;
                           print("thedata onpasssng ${data["_id"]} and id $id");
                           Provider.of<TodoProvider>(context, listen: false)
@@ -227,9 +235,14 @@ updateDataWidget(
                                         fontSize: 18))));
                             Navigator.pop(context);
                           });
-                        }else{
-                          Navigator.pop(context);
-                          print("Autherrorr");//////sas
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Vx.gray900,
+                              content: Text(
+                                'Invalid Inputs',
+                                style: TextStyle(
+                                    color: Colors.cyanAccent, fontSize: 18),
+                              )));
                         }
                       },
                       child: Text("Update")),
@@ -243,3 +256,10 @@ updateDataWidget(
         );
       });
 }
+
+userFider() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var user = await prefs.getString('user') ?? "public";
+    userName = user;
+    
+  }

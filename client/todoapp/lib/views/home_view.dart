@@ -23,7 +23,8 @@ class _HomeViewState extends State<HomeView> {
   String? user;
   @override
   void initState() {
-    Provider.of<TodoProvider>(context, listen: false).fetchData();
+    Provider.of<TodoProvider>(context, listen: false)
+        .filterfetchData(userName ?? "public");
     userFider();
     super.initState();
   }
@@ -53,27 +54,24 @@ class _HomeViewState extends State<HomeView> {
           displayFullTextOnTap: true,
           stopPauseOnTap: true,
         ),
-        actions: [
-          IconButton(
-            icon: Icon(EvaIcons.sync),
-            onPressed: () {
-              setState(() {});
-            },
-          ),
-        ],
         centerTitle: true,
       ),
       body: Container(
         child: Consumer<TodoProvider>(
           builder: (context, model, _) => FutureBuilder(
-            builder: (context, snapshot) => snapshot.connectionState ==
-                    ConnectionState.waiting
+            builder: (context, snapshot) => AsyncSnapshot.nothing() == snapshot
                 ? Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.topCenter,
                     child: Column(
                       children: [
+                        MaterialButton(
+                          onPressed: () {
+                            print("model ");
+                            print("model $snapshot");
+                          },
+                        ),
                         LinearProgressIndicator(
                           valueColor:
                               AlwaysStoppedAnimation<Color>(Colors.greenAccent),
@@ -127,9 +125,7 @@ class _HomeViewState extends State<HomeView> {
                                       color: Colors.redAccent, fontSize: 18),
                                 )));
                             model.deleteData(model.todoData[index]['_id']);
-                            setState(() {
-                              model.todoData.removeAt(index);
-                            });
+                            model.todoData.removeAt(index);
                           }
                         },
                         confirmDismiss:
@@ -202,7 +198,7 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       );
                     }),
-            future: model.filterfetchData(userName??"public"),
+            future: model.filterfetchData(userName ?? "public"),
           ),
         ),
       ),
@@ -211,14 +207,16 @@ class _HomeViewState extends State<HomeView> {
 
   userFider() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    user = await prefs.getString('user')??"public";
-    userName=user;
+    user = await prefs.getString('user') ?? "public";
+    userName = user;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Vx.gray900,
         content: Text('$user Welcome!',
             style: TextStyle(color: Colors.greenAccent, fontSize: 18))));
+    Provider.of<TodoProvider>(context, listen: false)
+        .filterfetchData(userName ?? "public");
     setState(() {
-      print("the user is $user");
+      user = userName;
     });
   }
 }
@@ -305,8 +303,8 @@ Future<bool?> _showConfirmationDialog(
   );
 }
 
-int daysBetween(DateTime from, DateTime to) {
-  from = DateTime(from.year, from.month, from.day);
-  to = DateTime(to.year, to.month, to.day);
-  return (to.difference(from).inHours / 24).round();
-}
+// int daysBetween(DateTime from, DateTime to) {
+//   from = DateTime(from.year, from.month, from.day);
+//   to = DateTime(to.year, to.month, to.day);
+//   return (to.difference(from).inHours / 24).round();
+// }
