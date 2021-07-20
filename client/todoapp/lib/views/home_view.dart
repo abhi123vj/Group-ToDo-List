@@ -1,8 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:readmore/readmore.dart';
+import 'package:todoapp/controller/userController.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -15,19 +17,19 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'add_todo.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({Key? key}) : super(key: key);
-
+  HomeView({Key? key}) : super(key: key);
+ 
   @override
   _HomeViewState createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-  String? user;
+   final bioController = Get.put(UserController());
+
   @override
   void initState() {
     Provider.of<TodoProvider>(context, listen: false)
-        .filterfetchData(userName ?? "public");
-    userFider();
+        .filterfetchData(bioController.userName.value);
     super.initState();
   }
 
@@ -40,6 +42,7 @@ class _HomeViewState extends State<HomeView> {
         foregroundColor: Colors.black,
       ),
       appBar: AppBar(
+        leading: Container(),
         title: AnimatedTextKit(
           animatedTexts: [
             TypewriterAnimatedText(
@@ -61,7 +64,8 @@ class _HomeViewState extends State<HomeView> {
       body: Container(
         child: Consumer<TodoProvider>(
           builder: (context, model, _) => FutureBuilder(
-            builder: (context, snapshot) => snapshot.connectionState != ConnectionState.done
+            builder: (context, snapshot) => snapshot.connectionState !=
+                    ConnectionState.done
                 ? Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
@@ -87,10 +91,7 @@ class _HomeViewState extends State<HomeView> {
                     itemCount: model.todoData.length,
                     itemBuilder: (context, int index) {
                       bool cmplt = model.todoData[index]['completed'];
-                      //  String date = model.todoData[index]['createdAt'];
-                      //  var date2 = DateTime.parse(date);
-                      // var dayneeded = daysBetween(date2, DateTime.now());
-                      //print("ff $dayneeded");
+
                       return Dismissible(
                         background: Container(
                           padding: EdgeInsets.symmetric(horizontal: 12.0),
@@ -184,13 +185,11 @@ class _HomeViewState extends State<HomeView> {
                           subtitle: Container(
                             child: ReadMoreText(
                               model.todoData[index]['description'],
-                              
                               style: TextStyle(
                                   decoration:
                                       cmplt ? TextDecoration.lineThrough : null,
                                   fontFamily: "RobotoMono",
                                   fontWeight: FontWeight.w300,
-                                  
                                   fontSize: 16,
                                   fontStyle: FontStyle.italic),
                               trimLines: 3,
@@ -198,7 +197,6 @@ class _HomeViewState extends State<HomeView> {
                               trimMode: TrimMode.Line,
                               moreStyle: TextStyle(
                                 fontSize: 14,
-                                
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -206,26 +204,11 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       );
                     }),
-            future: model.filterfetchData(userName ?? "public"),
+            future: model.filterfetchData(bioController.userName.value),
           ),
         ),
       ),
     );
-  }
-
-  userFider() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    user = await prefs.getString('user') ?? "public";
-    userName = user;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Vx.gray900,
-        content: Text('$user Welcome!',
-            style: TextStyle(color: Colors.greenAccent, fontSize: 20))));
-    Provider.of<TodoProvider>(context, listen: false)
-        .filterfetchData(userName ?? "public");
-    setState(() {
-      user = userName;
-    });
   }
 }
 
@@ -281,12 +264,28 @@ Future<bool?> _showConfirmationDialog(
                     }).whenComplete(() {
                       ///addd
 
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          backgroundColor: Vx.gray900,
-                          content: Text('${titleController.text} Updated!',
-                              style: TextStyle(
-                                  color: Colors.greenAccent, fontSize: 20))));
-                      Navigator.pop(context);
+                      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      //     backgroundColor: Vx.gray900,
+                      //     content: Text('${titleController.text} Updated!',
+                      //         style: TextStyle(
+                      //             color: Colors.greenAccent, fontSize: 20))));
+                                            Navigator.pop(context);
+                      if(model.todoData[index]['completed'])
+                      Get.snackbar(
+                            'Reopened Todo!',
+                            '${model.todoData[index]['title']}',
+                            duration: Duration(seconds: 4),
+                            animationDuration: Duration(milliseconds: 500),
+                            snackPosition: SnackPosition.TOP,
+                          );
+                          else{
+                              Get.snackbar(
+                            'congratulations!',
+                            'thr',
+                            duration: Duration(seconds: 4),
+                            animationDuration: Duration(milliseconds: 500),
+                            snackPosition: SnackPosition.TOP,
+                          );}
                     });
                   }
                 }
@@ -311,8 +310,8 @@ Future<bool?> _showConfirmationDialog(
   );
 }
 
-// int daysBetween(DateTime from, DateTime to) {
-//   from = DateTime(from.year, from.month, from.day);
-//   to = DateTime(to.year, to.month, to.day);
-//   return (to.difference(from).inHours / 24).round();
-// }
+ int daysBetween(DateTime from, DateTime to) {
+  from = DateTime(from.year, from.month, from.day);
+   to = DateTime(to.year, to.month, to.day);
+   return (to.difference(from).inHours / 24).round();
+ }

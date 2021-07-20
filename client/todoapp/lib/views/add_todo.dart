@@ -2,25 +2,21 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todoapp/controller/userController.dart';
 import 'package:todoapp/provider/todo_provider.dart';
 import 'dart:ui' as ui;
 import 'package:velocity_x/velocity_x.dart';
 
 final titleController = TextEditingController();
 final descriptionController = TextEditingController();
-
-Future<void> addUser(String counter) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('user', counter);
-  userFider();
-}
-
-String? userName;
+var focusNode = FocusNode();
 
 addDataWidget(BuildContext context) {
-  print("todo username is $userName");
+  final bioController = Get.put(UserController());
+
+  print("todo username is ${bioController.userName}");
   int flag = 0;
 
   descriptionController.clear();
@@ -60,6 +56,7 @@ addDataWidget(BuildContext context) {
                   ),
                   TextFormField(
                     textCapitalization: TextCapitalization.words,
+                    focusNode: focusNode,
                     decoration: InputDecoration(
                       labelText: 'Title',
                       border: OutlineInputBorder(),
@@ -97,35 +94,39 @@ addDataWidget(BuildContext context) {
 
                           Provider.of<TodoProvider>(context, listen: false)
                               .addData({
-                            "user": userName,
+                            "user": bioController.userName.value,
                             "title": titleController.text,
                             "description": descriptionController.text,
                             "completed": false
                           }).whenComplete(() {
-                            ///addd
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Vx.gray900,
-                                content: Text(
-                                  ' ${titleController.text} Added!',
-                                  style: TextStyle(
-                                      color: Colors.cyanAccent, fontSize: 20),
-                                )));
-                            flag = 0;
-                            Navigator.pop(context);
-                          });
-                        } else if (flag == 0 &&
-                            descriptionController.text.isNotEmpty) {
-                          addUser(descriptionController.text);
-                          Navigator.pop(context);
-                          Provider.of<TodoProvider>(context, listen: false)
-                              .filterfetchData(userName ?? "public");
-                        } else {
-                          addUser("public");
-                        
-                          Provider.of<TodoProvider>(context, listen: false)
-                              .filterfetchData(userName ?? "public");
+                          
+                             Navigator.pop(context);
+                            Get.snackbar(
+                              'New Todo Added!',
+                              '${titleController.text}',
+                              duration: Duration(seconds: 4),
+                              animationDuration: Duration(milliseconds: 500),
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
 
-                          Navigator.pop(context);
+                           
+                          });
+                        } else if (titleController.text.isEmpty && flag == 0) {
+                          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          //     backgroundColor: Vx.gray900,
+                          //     content: Text(
+                          //       'Enter A Todo',
+                          //       style: TextStyle(
+                          //           color: Colors.redAccent, fontSize: 20),
+                          //     )));
+                          focusNode.requestFocus();
+                          Get.snackbar(
+                            'Add Todo',
+                            'Title cannot be blank!',
+                            duration: Duration(seconds: 4),
+                            animationDuration: Duration(milliseconds: 500),
+                            snackPosition: SnackPosition.TOP,
+                          );
                         }
                       },
                       child: Text("Submit")),
@@ -142,6 +143,8 @@ addDataWidget(BuildContext context) {
 
 updateDataWidget(
     BuildContext context, String id, Map<String, dynamic> data) async {
+  final bioController = Get.put(UserController());
+
   titleController.text = data["title"];
   descriptionController.text = data["description"];
   int flag = 0;
@@ -180,6 +183,7 @@ updateDataWidget(
                   ),
                   TextFormField(
                     textCapitalization: TextCapitalization.words,
+                    focusNode: focusNode,
                     decoration: InputDecoration(
                       labelText: 'Title',
                       border: OutlineInputBorder(),
@@ -214,7 +218,7 @@ updateDataWidget(
                       onPressed: () {
                         if (titleController.text.isNotEmpty &&
                             flag == 0 &&
-                            data["user"] == userName) {
+                            data["user"] == bioController.userName.value) {
                           flag = 1;
                           print("thedata onpasssng ${data["_id"]} and id $id");
                           Provider.of<TodoProvider>(context, listen: false)
@@ -226,23 +230,37 @@ updateDataWidget(
                           }).whenComplete(() {
                             ///addd
                             flag = 0;
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Vx.gray900,
-                                content: Text(
-                                    '${titleController.text} Updated!',
-                                    style: TextStyle(
-                                        color: Colors.greenAccent,
-                                        fontSize: 20))));
-                            Navigator.pop(context);
+                                                        Navigator.pop(context);
+
+                          Get.snackbar(
+                              'Todo Updated!',
+                              '${titleController.text}',
+                              duration: Duration(seconds: 4),
+                              animationDuration: Duration(milliseconds: 500),
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+
+
                           });
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Vx.gray900,
-                              content: Text(
-                                'Invalid Inputs',
-                                style: TextStyle(
-                                    color: Colors.cyanAccent, fontSize: 20),
-                              )));
+                        }
+                        else if(data["user"] != bioController.userName.value){
+                          Get.snackbar(
+                            'Access Denied!!',
+                            'You dont ahve the permission to modify the data',
+                            duration: Duration(seconds: 4),
+                            animationDuration: Duration(milliseconds: 500),
+                            snackPosition: SnackPosition.TOP,
+                          );
+                        }
+                         else if(flag==0){
+                          focusNode.requestFocus();
+                          Get.snackbar(
+                            'Edit Todo',
+                            'Title cannot be blank!',
+                            duration: Duration(seconds: 4),
+                            animationDuration: Duration(milliseconds: 500),
+                            snackPosition: SnackPosition.TOP,
+                          );
                         }
                       },
                       child: Text("Update")),
@@ -256,10 +274,3 @@ updateDataWidget(
         );
       });
 }
-
-userFider() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var user = await prefs.getString('user') ?? "public";
-    userName = user;
-    
-  }
