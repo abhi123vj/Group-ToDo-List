@@ -18,13 +18,13 @@ import 'add_todo.dart';
 
 class HomeView extends StatefulWidget {
   HomeView({Key? key}) : super(key: key);
- 
+
   @override
   _HomeViewState createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-   final bioController = Get.put(UserController());
+  final bioController = Get.put(UserController());
 
   @override
   void initState() {
@@ -174,6 +174,7 @@ class _HomeViewState extends State<HomeView> {
                             style: GoogleFonts.raleway(
                               textStyle: Theme.of(context).textTheme.headline4,
                               fontSize: 24,
+                              color: Colors.white,
                               fontWeight: FontWeight.w700,
                               fontStyle: FontStyle.normal,
                             ),
@@ -190,6 +191,7 @@ class _HomeViewState extends State<HomeView> {
                                       cmplt ? TextDecoration.lineThrough : null,
                                   fontFamily: "RobotoMono",
                                   fontWeight: FontWeight.w300,
+                                  color: Colors.white,
                                   fontSize: 16,
                                   fontStyle: FontStyle.italic),
                               trimLines: 3,
@@ -222,18 +224,30 @@ Future<bool?> _showConfirmationDialog(
       return BackdropFilter(
         filter: new ui.ImageFilter.blur(sigmaX: 1, sigmaY: 1),
         child: AlertDialog(
-          title: Text('$action this Todo?'),
+          backgroundColor: Vx.gray900,
+          title: Text(
+            '$action this Todo?',
+            style: GoogleFonts.sourceCodePro(
+              textStyle: Theme.of(context).textTheme.headline4,
+              fontSize: 20,
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontStyle: FontStyle.normal,
+            ),
+          ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Center(
                   child: Text(
                     model.todoData[index]['title'],
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         fontFamily: "RobotoMono",
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                         fontSize: 24,
-                        fontStyle: FontStyle.italic),
+                        fontStyle: FontStyle.normal),
                   ),
                 ).shimmer(
                     primaryColor: Colors.white,
@@ -249,6 +263,11 @@ Future<bool?> _showConfirmationDialog(
                 style: TextStyle(color: Vx.red100),
               ),
               onPressed: () {
+                String credate = model.todoData[index]['createdAt'];
+                DateTime date1 = DateTime.parse(credate);
+                DateTime date2 = DateTime.now();
+                print("ths days is ${daysBetween(date1, date2)}");
+
                 if (flag == 0) {
                   flag = 1;
                   if (action == "Delete")
@@ -269,23 +288,24 @@ Future<bool?> _showConfirmationDialog(
                       //     content: Text('${titleController.text} Updated!',
                       //         style: TextStyle(
                       //             color: Colors.greenAccent, fontSize: 20))));
-                                            Navigator.pop(context);
-                      if(model.todoData[index]['completed'])
-                      Get.snackbar(
-                            'Reopened Todo!',
-                            '${model.todoData[index]['title']}',
-                            duration: Duration(seconds: 4),
-                            animationDuration: Duration(milliseconds: 500),
-                            snackPosition: SnackPosition.TOP,
-                          );
-                          else{
-                              Get.snackbar(
-                            'congratulations!',
-                            'thr',
-                            duration: Duration(seconds: 4),
-                            animationDuration: Duration(milliseconds: 500),
-                            snackPosition: SnackPosition.TOP,
-                          );}
+                      Navigator.pop(context);
+                      if (model.todoData[index]['completed'])
+                        Get.snackbar(
+                          'Reopened Todo!',
+                          '${model.todoData[index]['title']}',
+                          duration: Duration(seconds: 4),
+                          animationDuration: Duration(milliseconds: 500),
+                          snackPosition: SnackPosition.TOP,
+                        );
+                      else {
+                        Get.snackbar(
+                          'congratulations!',
+                          'You have Finshed the task within  ${daysBetween(date1, date2) + 1} Day',
+                          duration: Duration(seconds: 4),
+                          animationDuration: Duration(milliseconds: 500),
+                          snackPosition: SnackPosition.TOP,
+                        );
+                      }
                     });
                   }
                 }
@@ -310,8 +330,8 @@ Future<bool?> _showConfirmationDialog(
   );
 }
 
- int daysBetween(DateTime from, DateTime to) {
+int daysBetween(DateTime from, DateTime to) {
   from = DateTime(from.year, from.month, from.day);
-   to = DateTime(to.year, to.month, to.day);
-   return (to.difference(from).inHours / 24).round();
- }
+  to = DateTime(to.year, to.month, to.day);
+  return (to.difference(from).inHours / 24).round();
+}

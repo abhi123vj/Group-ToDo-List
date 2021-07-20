@@ -7,6 +7,7 @@ import 'package:todoapp/views/home_view.dart';
 import 'package:todoapp/views/loginPage.dart';
 
 import 'controller/userController.dart';
+import 'package:flutter/services.dart' ;
 
 void main() async {
   final bioController = Get.put(UserController());
@@ -25,6 +26,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
     return MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => TodoProvider())],
       child: GetMaterialApp(

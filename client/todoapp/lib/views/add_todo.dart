@@ -8,6 +8,7 @@ import 'package:todoapp/controller/userController.dart';
 import 'package:todoapp/provider/todo_provider.dart';
 import 'dart:ui' as ui;
 import 'package:velocity_x/velocity_x.dart';
+import 'dart:io';
 
 final titleController = TextEditingController();
 final descriptionController = TextEditingController();
@@ -88,41 +89,55 @@ addDataWidget(BuildContext context) {
                       ),
                       color: Colors.greenAccent,
                       textColor: Colors.black,
-                      onPressed: () {
-                        if (titleController.text.isNotEmpty && flag == 0) {
-                          flag = 1;
+                      onPressed: () async {
+                        try {
+                          final result =
+                              await InternetAddress.lookup('example.com');
+                          if (result.isNotEmpty &&
+                              result[0].rawAddress.isNotEmpty) {
+                            if (titleController.text.isNotEmpty && flag == 0) {
+                              flag = 1;
 
-                          Provider.of<TodoProvider>(context, listen: false)
-                              .addData({
-                            "user": bioController.userName.value,
-                            "title": titleController.text,
-                            "description": descriptionController.text,
-                            "completed": false
-                          }).whenComplete(() {
-                          
-                             Navigator.pop(context);
-                            Get.snackbar(
-                              'New Todo Added!',
-                              '${titleController.text}',
-                              duration: Duration(seconds: 4),
-                              animationDuration: Duration(milliseconds: 500),
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
-
-                           
-                          });
-                        } else if (titleController.text.isEmpty && flag == 0) {
-                          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          //     backgroundColor: Vx.gray900,
-                          //     content: Text(
-                          //       'Enter A Todo',
-                          //       style: TextStyle(
-                          //           color: Colors.redAccent, fontSize: 20),
-                          //     )));
-                          focusNode.requestFocus();
+                              Provider.of<TodoProvider>(context, listen: false)
+                                  .addData({
+                                "user": bioController.userName.value,
+                                "title": titleController.text,
+                                "description": descriptionController.text,
+                                "completed": false
+                              }).whenComplete(() {
+                                Navigator.pop(context);
+                                Get.snackbar(
+                                  'New Todo Added!',
+                                  '${titleController.text}',
+                                  duration: Duration(seconds: 4),
+                                  animationDuration:
+                                      Duration(milliseconds: 500),
+                                  snackPosition: SnackPosition.BOTTOM,
+                                );
+                              });
+                            } else if (titleController.text.isEmpty &&
+                                flag == 0) {
+                              // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              //     backgroundColor: Vx.gray900,
+                              //     content: Text(
+                              //       'Enter A Todo',
+                              //       style: TextStyle(
+                              //           color: Colors.redAccent, fontSize: 20),
+                              //     )));
+                              focusNode.requestFocus();
+                              Get.snackbar(
+                                'Add Todo',
+                                'Title cannot be blank!',
+                                duration: Duration(seconds: 4),
+                                animationDuration: Duration(milliseconds: 500),
+                                snackPosition: SnackPosition.TOP,
+                              );
+                            }
+                          }
+                        } on SocketException catch (_) {
                           Get.snackbar(
-                            'Add Todo',
-                            'Title cannot be blank!',
+                            'no connectivity',
+                            'you are not connected to the internet',
                             duration: Duration(seconds: 4),
                             animationDuration: Duration(milliseconds: 500),
                             snackPosition: SnackPosition.TOP,
@@ -215,7 +230,13 @@ updateDataWidget(
                       ),
                       color: Colors.greenAccent,
                       textColor: Colors.black,
-                      onPressed: () {
+                      onPressed: () async {
+                        try {
+                          final result =
+                              await InternetAddress.lookup('example.com');
+                          if (result.isNotEmpty &&
+                              result[0].rawAddress.isNotEmpty) {
+                           
                         if (titleController.text.isNotEmpty &&
                             flag == 0 &&
                             data["user"] == bioController.userName.value) {
@@ -230,20 +251,18 @@ updateDataWidget(
                           }).whenComplete(() {
                             ///addd
                             flag = 0;
-                                                        Navigator.pop(context);
+                            Navigator.pop(context);
 
-                          Get.snackbar(
+                            Get.snackbar(
                               'Todo Updated!',
                               '${titleController.text}',
                               duration: Duration(seconds: 4),
                               animationDuration: Duration(milliseconds: 500),
                               snackPosition: SnackPosition.BOTTOM,
                             );
-
-
                           });
-                        }
-                        else if(data["user"] != bioController.userName.value){
+                        } else if (data["user"] !=
+                            bioController.userName.value) {
                           Get.snackbar(
                             'Access Denied!!',
                             'You dont ahve the permission to modify the data',
@@ -251,8 +270,7 @@ updateDataWidget(
                             animationDuration: Duration(milliseconds: 500),
                             snackPosition: SnackPosition.TOP,
                           );
-                        }
-                         else if(flag==0){
+                        } else if (flag == 0) {
                           focusNode.requestFocus();
                           Get.snackbar(
                             'Edit Todo',
@@ -262,6 +280,17 @@ updateDataWidget(
                             snackPosition: SnackPosition.TOP,
                           );
                         }
+                          }
+                        } on SocketException catch (_) {
+                         Get.snackbar(
+                          'no connectivity',
+                            'you are not connected to the internet',
+                            duration: Duration(seconds: 4),
+                            animationDuration: Duration(milliseconds: 500),
+                            snackPosition: SnackPosition.TOP,
+                          );
+                        }
+
                       },
                       child: Text("Update")),
                   SizedBox(
