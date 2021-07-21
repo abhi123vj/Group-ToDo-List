@@ -12,13 +12,13 @@ import 'dart:io';
 
 final titleController = TextEditingController();
 final descriptionController = TextEditingController();
-var focusNode = FocusNode();
 
 addDataWidget(BuildContext context) {
   final bioController = Get.put(UserController());
-
   print("todo username is ${bioController.userName}");
   int flag = 0;
+  var focusNode = FocusNode();
+  focusNode.requestFocus();
 
   descriptionController.clear();
   titleController.clear();
@@ -35,6 +35,7 @@ addDataWidget(BuildContext context) {
                 bottom: MediaQuery.of(context).viewInsets.bottom,
                 top: 20),
             child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               scrollDirection: Axis.vertical,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -159,7 +160,9 @@ addDataWidget(BuildContext context) {
 updateDataWidget(
     BuildContext context, String id, Map<String, dynamic> data) async {
   final bioController = Get.put(UserController());
+  var focusNode = FocusNode();
 
+  focusNode.requestFocus();
   titleController.text = data["title"];
   descriptionController.text = data["description"];
   int flag = 0;
@@ -176,6 +179,7 @@ updateDataWidget(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
                 top: 20),
             child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               scrollDirection: Axis.vertical,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -236,61 +240,61 @@ updateDataWidget(
                               await InternetAddress.lookup('example.com');
                           if (result.isNotEmpty &&
                               result[0].rawAddress.isNotEmpty) {
-                           
-                        if (titleController.text.isNotEmpty &&
-                            flag == 0 &&
-                            data["user"] == bioController.userName.value) {
-                          flag = 1;
-                          print("thedata onpasssng ${data["_id"]} and id $id");
-                          Provider.of<TodoProvider>(context, listen: false)
-                              .updateData({
-                            "_id": id,
-                            "title": titleController.text,
-                            "description": descriptionController.text,
-                            "completed": false
-                          }).whenComplete(() {
-                            ///addd
-                            flag = 0;
-                            Navigator.pop(context);
+                            if (titleController.text.isNotEmpty &&
+                                flag == 0 &&
+                                data["user"] == bioController.userName.value) {
+                              flag = 1;
+                              print(
+                                  "thedata onpasssng ${data["_id"]} and id $id");
+                              Provider.of<TodoProvider>(context, listen: false)
+                                  .updateData({
+                                "_id": id,
+                                "title": titleController.text,
+                                "description": descriptionController.text,
+                                "completed": false
+                              }).whenComplete(() {
+                                ///addd
+                                flag = 0;
+                                Navigator.pop(context);
 
-                            Get.snackbar(
-                              'Todo Updated!',
-                              '${titleController.text}',
-                              duration: Duration(seconds: 4),
-                              animationDuration: Duration(milliseconds: 500),
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
-                          });
-                        } else if (data["user"] !=
-                            bioController.userName.value) {
-                          Get.snackbar(
-                            'Access Denied!!',
-                            'You dont ahve the permission to modify the data',
-                            duration: Duration(seconds: 4),
-                            animationDuration: Duration(milliseconds: 500),
-                            snackPosition: SnackPosition.TOP,
-                          );
-                        } else if (flag == 0) {
-                          focusNode.requestFocus();
-                          Get.snackbar(
-                            'Edit Todo',
-                            'Title cannot be blank!',
-                            duration: Duration(seconds: 4),
-                            animationDuration: Duration(milliseconds: 500),
-                            snackPosition: SnackPosition.TOP,
-                          );
-                        }
+                                Get.snackbar(
+                                  'Todo Updated!',
+                                  '${titleController.text}',
+                                  duration: Duration(seconds: 4),
+                                  animationDuration:
+                                      Duration(milliseconds: 500),
+                                  snackPosition: SnackPosition.BOTTOM,
+                                );
+                              });
+                            } else if (data["user"] !=
+                                bioController.userName.value) {
+                              Get.snackbar(
+                                'Access Denied!!',
+                                'You dont ahve the permission to modify the data',
+                                duration: Duration(seconds: 4),
+                                animationDuration: Duration(milliseconds: 500),
+                                snackPosition: SnackPosition.TOP,
+                              );
+                            } else if (flag == 0) {
+                              focusNode.requestFocus();
+                              Get.snackbar(
+                                'Edit Todo',
+                                'Title cannot be blank!',
+                                duration: Duration(seconds: 4),
+                                animationDuration: Duration(milliseconds: 500),
+                                snackPosition: SnackPosition.TOP,
+                              );
+                            }
                           }
                         } on SocketException catch (_) {
-                         Get.snackbar(
-                          'no connectivity',
+                          Get.snackbar(
+                            'no connectivity',
                             'you are not connected to the internet',
                             duration: Duration(seconds: 4),
                             animationDuration: Duration(milliseconds: 500),
                             snackPosition: SnackPosition.TOP,
                           );
                         }
-
                       },
                       child: Text("Update")),
                   SizedBox(

@@ -30,6 +30,7 @@ dependencies:
   get: ^4.1.4
   google_fonts: ^2.1.0
   http: ^0.13.3
+  flutter_svg: ^0.22.0
   page_transition: ^2.0.2
   provider: ^5.0.0
   readmore: ^2.1.0
@@ -69,22 +70,11 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: RobotoMono
+    - family: Zenloop
       fonts:
-        - asset: assets/fonts/robotoMono/RobotoMono-Bold.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-BoldItalic.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-ExtraLight.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-ExtraLightItalic.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-Italic.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-Light.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-LightItalic.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-Medium.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-MediumItalic.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-Regular.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-SemiBold.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-SemiBoldItalic.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-Thin.ttf
-        - asset: assets/fonts/robotoMono/RobotoMono-ThinItalic.ttf
+        - asset: assets/fonts/zen loop/ZenLoop-Italic.ttf
+        - asset: assets/fonts/zen loop/ZenLoop-Regular.ttf
+    
           style: italic
   #   - family: Trajan Pro
   #     fonts:

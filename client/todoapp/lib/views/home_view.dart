@@ -9,7 +9,6 @@ import 'package:velocity_x/velocity_x.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:todoapp/provider/todo_provider.dart';
 import 'dart:ui' as ui;
@@ -35,6 +34,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    bioController.display(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => addDataWidget(context),
@@ -47,10 +47,11 @@ class _HomeViewState extends State<HomeView> {
           animatedTexts: [
             TypewriterAnimatedText(
               'Todo List',
-              textStyle: const TextStyle(
-                fontFamily: "RobotoMono",
-                fontSize: 34,
-                fontWeight: FontWeight.bold,
+              textStyle: GoogleFonts.robotoMono(
+                textStyle: Theme.of(context).textTheme.headline4,
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontStyle: FontStyle.normal,
               ),
               speed: const Duration(milliseconds: 1500),
             ),
@@ -62,6 +63,7 @@ class _HomeViewState extends State<HomeView> {
         centerTitle: true,
       ),
       body: Container(
+        
         child: Consumer<TodoProvider>(
           builder: (context, model, _) => FutureBuilder(
             builder: (context, snapshot) => snapshot.connectionState !=
@@ -83,129 +85,188 @@ class _HomeViewState extends State<HomeView> {
                       ],
                     ),
                   )
-                : ListView.separated(
-                    separatorBuilder: (context, index) {
-                      return Divider();
-                    },
-                    physics: BouncingScrollPhysics(),
-                    itemCount: model.todoData.length,
-                    itemBuilder: (context, int index) {
-                      bool cmplt = model.todoData[index]['completed'];
-
-                      return Dismissible(
-                        background: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12.0),
-                          color: cmplt ? Colors.grey : Colors.green,
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: [
-                              cmplt
-                                  ? Icon(EvaIcons.undoOutline)
-                                  : Icon(EvaIcons.checkmark),
-                            ],
+                : model.todoData.length == 0
+                    ? Container(
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Container(
+                                margin: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context).size.height *
+                                        .1),
+                                child: bioController.displyimag),
                           ),
                         ),
-                        secondaryBackground: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12.0),
-                          color: Colors.red,
-                          alignment: Alignment.centerRight,
-                          child: Icon(FontAwesomeIcons.trashAlt),
-                        ),
-                        key: ValueKey(model.todoData[index]['_id']),
-                        onDismissed: (DismissDirection direction) {
-                          if (direction == DismissDirection.endToStart) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Vx.gray900,
-                                content: Text(
-                                  ' ${model.todoData[index]['title']}  Removed!',
-                                  style: TextStyle(
-                                      color: Colors.redAccent, fontSize: 20),
-                                )));
-                            model.deleteData(model.todoData[index]['_id']);
-                            model.todoData.removeAt(index);
-                          }
-                        },
-                        confirmDismiss:
-                            (DismissDirection dismissDirection) async {
-                          switch (dismissDirection) {
-                            case DismissDirection.endToStart:
-                              return await _showConfirmationDialog(
-                                      context, 'Delete', model, index) ==
-                                  true;
-                            case DismissDirection.startToEnd:
-                              return await _showConfirmationDialog(
-                                      context,
-                                      cmplt ? 'Reactivate' : 'Completed',
-                                      model,
-                                      index) ==
-                                  true;
-                            case DismissDirection.horizontal:
-                            case DismissDirection.vertical:
-                            case DismissDirection.up:
-                            case DismissDirection.down:
-                            case DismissDirection.none:
-                              assert(false);
-                              break;
-                          }
-                          return false;
-                        },
-                        child: ListTile(
-                          //   onLongPress: () {
-                          //     model.deleteData(model.todoData[index]['_id']);
-                          //   },
-                          onTap: () {
-                            print("thedata ${model.todoData[index]['_id']}");
-                            updateDataWidget(
-                                context,
-                                model.todoData[index]['_id'],
-                                model.todoData[index]);
-                          },
-                          title: AutoSizeText(
-                            model.todoData[index]['title'],
-                            maxLines: 2,
-                            minFontSize: 18,
-                            // style: TextStyle(
-                            //   fontFamily: "RobotoMono",
-                            //   fontWeight: FontWeight.w900,
+                      )
+                    : ListView.builder(
+                        
+                        physics: BouncingScrollPhysics(),
+                        itemCount: model.todoData.length,
+                        itemBuilder: (context, int index) {
+                          bool cmplt = model.todoData[index]['completed'];
 
-                            //   fontSize: 24,
-                            //   fontStyle: FontStyle.normal,
-                            // ),
-                            style: GoogleFonts.raleway(
-                              textStyle: Theme.of(context).textTheme.headline4,
-                              fontSize: 24,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ).shimmer(
-                              primaryColor: Vx.blue100,
-                              secondaryColor: cmplt ? Vx.cyan100 : Vx.cyan400,
-                              duration: Duration(seconds: cmplt ? 2 : 3)),
-                          //subtitle: Text(model.todoData[index]['description'],style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20)),
-                          subtitle: Container(
-                            child: ReadMoreText(
-                              model.todoData[index]['description'],
-                              style: TextStyle(
-                                  decoration:
-                                      cmplt ? TextDecoration.lineThrough : null,
-                                  fontFamily: "RobotoMono",
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic),
-                              trimLines: 3,
-                              textScaleFactor: 1.25,
-                              trimMode: TrimMode.Line,
-                              moreStyle: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 10,top: 10),
+                            child: Material(
+                              borderRadius: BorderRadius.circular(8),
+                              elevation: cmplt?0:8,
+                              child: Container(
+                                decoration: BoxDecoration(
+
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Dismissible(
+                                  background: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 12.0),
+                                    color: cmplt ? Colors.grey : Colors.green,
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      children: [
+                                        cmplt
+                                            ? Icon(EvaIcons.undoOutline)
+                                            : Icon(EvaIcons.checkmark),
+                                      ],
+                                    ),
+                                  ),
+                                  secondaryBackground: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 12.0),
+                                    color: Colors.red,
+                                    alignment: Alignment.centerRight,
+                                    child: Icon(FontAwesomeIcons.trashAlt),
+                                  ),
+                                  key: ValueKey(model.todoData[index]['_id']),
+                                  onDismissed: (DismissDirection direction) {
+                                    if (direction ==
+                                        DismissDirection.endToStart) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              backgroundColor: Vx.gray900,
+                                              content: Text(
+                                                ' ${model.todoData[index]['title']}  Removed!',
+                                                style: TextStyle(
+                                                    color: Colors.redAccent,
+                                                    fontSize: 20),
+                                              )));
+                                      model.deleteData(
+                                          model.todoData[index]['_id']);
+                                      model.todoData.removeAt(index);
+                                    }
+                                  },
+                                  confirmDismiss: (DismissDirection
+                                      dismissDirection) async {
+                                    switch (dismissDirection) {
+                                      case DismissDirection.endToStart:
+                                        return await _showConfirmationDialog(
+                                                context,
+                                                'Delete',
+                                                model,
+                                                index) ==
+                                            true;
+                                      case DismissDirection.startToEnd:
+                                        return await _showConfirmationDialog(
+                                                context,
+                                                cmplt
+                                                    ? 'Reactivate'
+                                                    : 'Completed',
+                                                model,
+                                                index) ==
+                                            true;
+                                      case DismissDirection.horizontal:
+                                      case DismissDirection.vertical:
+                                      case DismissDirection.up:
+                                      case DismissDirection.down:
+                                      case DismissDirection.none:
+                                        assert(false);
+                                        break;
+                                    }
+                                    return false;
+                                  },
+                                  child: ListTile(
+                                    //   onLongPress: () {
+                                    //     model.deleteData(model.todoData[index]['_id']);
+                                    //   },
+                                    onTap: () {
+                                      print(
+                                          "thedata ${model.todoData[index]['_id']}");
+                                      updateDataWidget(
+                                          context,
+                                          model.todoData[index]['_id'],
+                                          model.todoData[index]);
+                                    },
+                                    title: AutoSizeText(
+                                      model.todoData[index]['title'],
+                                      maxLines: 2,
+                                      minFontSize: 18,
+                                      // style: TextStyle(
+                                      //   fontFamily: "RobotoMono",
+                                      //   fontWeight: FontWeight.w900,
+
+                                      //   fontSize: 24,
+                                      //   fontStyle: FontStyle.normal,
+                                      // ),
+                                      style: GoogleFonts.raleway(
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .headline4,
+                                        fontSize: 24,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                        fontStyle: FontStyle.normal,
+                                      ),
+                                    ).shimmer(
+                                        primaryColor: Vx.blue100,
+                                        secondaryColor:
+                                            cmplt ? Vx.cyan100 : Vx.cyan400,
+                                        duration:
+                                            Duration(seconds: cmplt ? 2 : 3)),
+                                    //subtitle: Text(model.todoData[index]['description'],style: TextStyle(fontWeight: FontWeight.normal,fontSize: 20)),
+                                    subtitle: Container(
+                                      child: ReadMoreText(
+                                        model.todoData[index]['description'],
+                                        // style: TextStyle(
+                                        //     decoration: cmplt
+                                        //         ? TextDecoration.lineThrough
+                                        //         : null,
+                                        //     fontFamily: "RobotoMono",
+                                        //     fontWeight: FontWeight.w300,
+                                        //     color: Colors.white,
+                                        //     fontSize: 16,
+                                        //     fontStyle: FontStyle.italic),
+                                        style: GoogleFonts.robotoMono(
+                                          decoration: cmplt
+                                              ? TextDecoration.lineThrough
+                                              : null,
+                                          decorationColor: Vx.blue300,
+                                          decorationThickness: 1.5,
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .headline4,
+                                          fontSize: 16,
+                                          color: cmplt ? Vx.gray300 : Vx.white,
+                                          fontWeight: cmplt
+                                              ? FontWeight.w100
+                                              : FontWeight.w300,
+                                          fontStyle: cmplt
+                                              ? FontStyle.italic
+                                              : FontStyle.normal,
+                                        ),
+                                        trimLines: 3,
+                                        textScaleFactor: 1.25,
+                                        trimMode: TrimMode.Line,
+                                        moreStyle: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      );
-                    }),
+                          );
+                        }),
             future: model.filterfetchData(bioController.userName.value),
           ),
         ),
@@ -236,6 +297,7 @@ Future<bool?> _showConfirmationDialog(
             ),
           ),
           content: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: ListBody(
               children: <Widget>[
                 Center(
@@ -267,7 +329,7 @@ Future<bool?> _showConfirmationDialog(
                 DateTime date1 = DateTime.parse(credate);
                 DateTime date2 = DateTime.now();
                 print("ths days is ${daysBetween(date1, date2)}");
-
+        
                 if (flag == 0) {
                   flag = 1;
                   if (action == "Delete")
@@ -282,7 +344,7 @@ Future<bool?> _showConfirmationDialog(
                           model.todoData[index]['completed'] ? false : true
                     }).whenComplete(() {
                       ///addd
-
+        
                       // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       //     backgroundColor: Vx.gray900,
                       //     content: Text('${titleController.text} Updated!',
