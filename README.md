@@ -22,6 +22,6 @@
 # Usage (try it out)
 
 
-> **You can try out the app [here](https://drive.google.com/file/d/1QJFAdaIOFK7yw-hi5hMXI8K-Uv37HM8x/view?usp=sharing).**
+> **You can try out the app [here](https://play.google.com/store/apps/details?id=com.abhi.todoapp).**
 
 ​
